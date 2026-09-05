@@ -1,29 +1,55 @@
-import { MotionConfig } from "framer-motion";
-import Orbs from "./components/Orbs";
-import Navbar from "./components/Navbar";
-import HeroSection from "./components/HeroSection";
-import FeaturesGrid from "./components/FeaturesGrid";
-import PricingSection from "./components/PricingSection";
-import FAQSection from "./components/FAQSection";
-import CTAStrip from "./components/CTAStrip";
-import Footer from "./components/Footer";
+import { HashRouter, Route, Routes, useLocation } from "react-router-dom";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
+import SmoothScroll from "./components/SmoothScroll";
+import NoiseOverlay from "./components/NoiseOverlay";
+import CustomCursor from "./components/CustomCursor";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import Product from "./pages/Product";
+import Solutions from "./pages/Solutions";
+import Company from "./pages/Company";
+import Pricing from "./pages/Pricing";
+import Contact from "./pages/Contact";
+
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <Layout>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.main
+          key={location.pathname}
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Routes location={location}>
+            <Route path="/" element={<Home />} />
+            <Route path="/product" element={<Product />} />
+            <Route path="/solutions" element={<Solutions />} />
+            <Route path="/company" element={<Company />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="*" element={<Home />} />
+          </Routes>
+        </motion.main>
+      </AnimatePresence>
+    </Layout>
+  );
+}
 
 export default function App() {
   return (
     <MotionConfig reducedMotion="user">
-      {/* no opaque wrapper bg here — the fixed z-(-1) orbs paint above the body canvas and below content */}
-      <div className="relative min-h-screen font-sans text-ink antialiased">
-        <Orbs />
-        <Navbar />
-        <main>
-          <HeroSection />
-          <FeaturesGrid />
-          <PricingSection />
-          <FAQSection />
-          <CTAStrip />
-        </main>
-        <Footer />
-      </div>
+      <HashRouter>
+        <SmoothScroll>
+          <div className="relative min-h-screen bg-obsidian text-paper">
+            <NoiseOverlay />
+            <CustomCursor />
+            <AnimatedRoutes />
+          </div>
+        </SmoothScroll>
+      </HashRouter>
     </MotionConfig>
   );
 }
