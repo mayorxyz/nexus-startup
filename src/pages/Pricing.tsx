@@ -14,11 +14,11 @@ function RoiCalculator() {
   const returnX = value / (team * 29);
 
   return (
-    <div className="rounded-xl border border-paper/10 bg-[#0b0b0c] p-8 md:p-12">
-      <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
+    <div className="rounded-xl border border-paper/10 bg-[#0b0b0c] p-5 sm:p-8 md:p-12">
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-sm">
           <p className="font-mono text-[11px] tracking-[0.25em] text-faint">ROI CALCULATOR</p>
-          <h2 className="mt-4 font-display text-3xl font-bold tracking-tight md:text-4xl">
+          <h2 className="mt-4 font-display text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
             How many engineers?
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted">
@@ -26,13 +26,14 @@ function RoiCalculator() {
           </p>
         </div>
         <div className="flex-1">
-          <p className="font-display text-[clamp(4rem,10vw,7rem)] font-bold leading-none text-paper">
+          <p className="font-display text-[clamp(3rem,10vw,7rem)] font-bold leading-none text-paper">
             {team}
             <span className="ml-3 align-middle font-mono text-xs tracking-[0.2em] text-faint">
               ENGINEERS
             </span>
           </p>
-          <div className="mt-8">
+          {/* Added py-3 to drastically increase the touch target height for mobile users */}
+          <div className="mt-8 py-3">
             <input
               type="range"
               min={5}
@@ -40,7 +41,7 @@ function RoiCalculator() {
               step={1}
               value={team}
               onChange={(e) => setTeam(parseInt(e.target.value, 10))}
-              className="roi-slider"
+              className="roi-slider w-full"
               aria-label="Team size"
               data-cursor="drag"
             />
@@ -52,35 +53,35 @@ function RoiCalculator() {
         </div>
       </div>
 
-      <div className="mt-12 grid gap-px border border-paper/10 bg-paper/10 sm:grid-cols-3">
-        <div className="bg-obsidian p-7">
+      <div className="mt-10 sm:mt-12 grid gap-px border border-paper/10 bg-paper/10 sm:grid-cols-3">
+        <div className="bg-obsidian p-5 sm:p-7">
           <Counter
             to={hours}
             duration={0.5}
             format={(n) => Math.round(n).toLocaleString()}
-            className="font-display text-4xl font-bold text-paper md:text-5xl"
+            className="font-display text-3xl sm:text-4xl font-bold text-paper md:text-5xl"
           />
           <p className="mt-2 font-mono text-[10px] tracking-[0.2em] text-faint">
             HOURS SAVED / MONTH
           </p>
         </div>
-        <div className="bg-obsidian p-7">
+        <div className="bg-obsidian p-5 sm:p-7">
           <Counter
             to={value}
             duration={0.5}
             format={(n) => "$" + Math.round(n).toLocaleString()}
-            className="font-display text-4xl font-bold text-cyan md:text-5xl"
+            className="font-display text-3xl sm:text-4xl font-bold text-cyan md:text-5xl"
           />
           <p className="mt-2 font-mono text-[10px] tracking-[0.2em] text-faint">
             VALUE RECOVERED / MONTH
           </p>
         </div>
-        <div className="bg-obsidian p-7">
+        <div className="bg-obsidian p-5 sm:p-7">
           <Counter
             to={returnX}
             duration={0.5}
             format={(n) => n.toFixed(0) + "×"}
-            className="gradient-text font-display text-4xl font-bold md:text-5xl"
+            className="gradient-text font-display text-3xl sm:text-4xl font-bold md:text-5xl"
           />
           <p className="mt-2 font-mono text-[10px] tracking-[0.2em] text-faint">
             ESTIMATED RETURN ON NEXUS PRO
@@ -160,12 +161,12 @@ function TierBand({ tier, index }: { tier: Tier; index: number }) {
       <button
         onClick={() => setOpen(!open)}
         aria-expanded={open}
-        className="group flex w-full items-center gap-6 px-6 py-7 text-left md:px-10 md:py-9"
+        className="group flex w-full items-center gap-3 sm:gap-6 px-4 py-5 text-left sm:px-6 sm:py-7 md:px-10 md:py-9"
       >
         <span className="font-mono text-xs text-faint">0{index + 1}</span>
         <span
-          className={`font-display font-bold tracking-tight transition-colors duration-300 group-hover:text-violet ${
-            tier.featured ? "text-3xl md:text-5xl" : "text-2xl md:text-4xl"
+          className={`font-display font-bold tracking-tight transition-colors duration-300 group-hover:text-violet min-w-0 ${
+            tier.featured ? "text-2xl sm:text-3xl md:text-5xl" : "text-xl sm:text-2xl md:text-4xl"
           }`}
         >
           {tier.name}
@@ -175,15 +176,15 @@ function TierBand({ tier, index }: { tier: Tier; index: number }) {
             ● MOST POPULAR
           </span>
         )}
-        <span className="ml-auto text-right">
-          <span className="block font-display text-xl font-bold text-paper md:text-2xl">
+        <span className="ml-auto text-right shrink-0">
+          <span className="block font-display text-lg sm:text-xl font-bold text-paper md:text-2xl">
             {tier.price}
           </span>
           <span className="font-mono text-[10px] tracking-[0.18em] text-faint">{tier.note}</span>
         </span>
         <Plus
-          size={22}
-          className={`shrink-0 text-muted transition-transform duration-400 ${
+          size={20}
+          className={`shrink-0 text-muted transition-transform duration-400 sm:size-[22px] ${
             open ? "rotate-45 text-violet" : ""
           }`}
         />
@@ -198,8 +199,8 @@ function TierBand({ tier, index }: { tier: Tier; index: number }) {
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="grid gap-8 border-t border-paper/10 px-6 py-8 md:grid-cols-[1fr_260px] md:px-10">
-              <ul className="grid gap-x-10 gap-y-3 sm:grid-cols-2">
+            <div className="grid gap-6 border-t border-paper/10 px-4 py-6 sm:gap-8 sm:px-6 sm:py-8 md:grid-cols-[1fr_260px] md:px-10">
+              <ul className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
                 {tier.features.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm text-muted">
                     <Check size={15} className="mt-0.5 shrink-0 text-cyan" strokeWidth={2.4} />
@@ -212,7 +213,7 @@ function TierBand({ tier, index }: { tier: Tier; index: number }) {
                   to={tier.name === "ENTERPRISE" ? "/contact" : "/contact"}
                   variant={tier.featured ? "solid" : "ghost"}
                   cursor="go"
-                  className="w-full justify-center md:w-auto"
+                  className="flex w-full justify-center md:w-auto"
                 >
                   {tier.cta}
                 </MagneticLink>
@@ -228,7 +229,7 @@ function TierBand({ tier, index }: { tier: Tier; index: number }) {
   );
 
   return tier.featured ? (
-    <div className="animate-gradient rounded-xl bg-gradient-to-r from-violet via-cyan to-violet p-[1.5px] shadow-[0_0_50px_rgba(139,92,246,0.25)]">
+    <div className="animate-gradient rounded-xl bg-gradient-to-r from-violet via-cyan to-violet p-[1.5px] shadow-[0_0_24px_rgba(139,92,246,0.2)] sm:shadow-[0_0_50px_rgba(139,92,246,0.25)]">
       {inner}
     </div>
   ) : (
@@ -251,9 +252,9 @@ const INCLUDED = [
 export default function Pricing() {
   return (
     <div className="overflow-x-clip">
-      <section className="mx-auto max-w-[1400px] px-5 pb-16 pt-32 md:px-8 md:pt-40">
+      <section className="mx-auto max-w-[1400px] px-5 pb-12 pt-24 sm:pb-16 sm:pt-32 md:px-8 md:pt-40">
         <p className="font-mono text-[11px] tracking-[0.25em] text-violet">04 — PRICING</p>
-        <h1 className="mt-6 max-w-4xl font-display font-bold leading-[0.95] tracking-tight text-[clamp(2.6rem,7.5vw,6rem)]">
+        <h1 className="mt-6 max-w-4xl font-display font-bold leading-[0.95] tracking-tight text-[clamp(2.25rem,8vw,6rem)]">
           <TextReveal text="THE MATH" className="block" />
           <TextReveal text="IS OBVIOUS." delay={0.12} className="block gradient-text" />
         </h1>
@@ -261,7 +262,7 @@ export default function Pricing() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.7 }}
-          className="mt-8 max-w-lg text-base leading-relaxed text-muted md:text-lg"
+          className="mt-6 sm:mt-8 max-w-lg text-base leading-relaxed text-muted md:text-lg"
         >
           No seat-minimum theatre, no &ldquo;contact us to learn what it costs.&rdquo;
           Run your own numbers first — then pick a tier.
@@ -272,7 +273,7 @@ export default function Pricing() {
         <RoiCalculator />
       </section>
 
-      <section className="mx-auto max-w-[1400px] space-y-4 px-5 py-24 md:px-8">
+      <section className="mx-auto max-w-[1400px] space-y-4 px-5 py-16 sm:py-24 md:px-8">
         <p className="font-mono text-[11px] tracking-[0.25em] text-faint">
           TIERS — CLICK TO EXPAND
         </p>
@@ -280,15 +281,15 @@ export default function Pricing() {
           <TierBand key={tier.name} tier={tier} index={i} />
         ))}
 
-        <div className="pt-10">
+        <div className="pt-8 sm:pt-10">
           <p className="font-mono text-[11px] tracking-[0.25em] text-faint">
             EVERY PLAN SHIPS WITH
           </p>
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mt-5 flex flex-wrap gap-2.5 sm:gap-3">
             {INCLUDED.map((item) => (
               <span
                 key={item}
-                className="border border-paper/15 px-4 py-2 font-mono text-[11px] tracking-[0.15em] text-muted transition-colors duration-300 hover:border-cyan hover:text-cyan"
+                className="border border-paper/15 px-3 py-1.5 sm:px-4 sm:py-2 font-mono text-[11px] tracking-[0.15em] text-muted transition-colors duration-300 hover:border-cyan hover:text-cyan"
               >
                 {item}
               </span>

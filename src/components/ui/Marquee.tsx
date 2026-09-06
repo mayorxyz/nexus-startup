@@ -1,48 +1,17 @@
-import { useRef, type CSSProperties } from "react";
-import { useMotionValueEvent, useScroll, useTransform, useVelocity } from "framer-motion";
-
 type MarqueeProps = {
   items: string[];
-  duration?: number;
   className?: string;
 };
 
-/**
- * Infinite horizontal marquee. Scroll velocity feeds a CSS variable
- * that divides the animation duration — the strip speeds up as you scroll.
- */
-export default function Marquee({ items, duration = 30, className = "" }: MarqueeProps) {
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const { scrollY } = useScroll();
-  const velocity = useVelocity(scrollY);
-  const speed = useTransform(velocity, [0, 900], [1, 2.6], { clamp: true });
-
-  useMotionValueEvent(speed, "change", (v) => {
-    trackRef.current?.style.setProperty("--speed", String(Math.max(1, Math.abs(v))));
-  });
-
-  const row = (ariaHidden: boolean) => (
-    <div aria-hidden={ariaHidden} className="flex shrink-0 items-center">
-      {items.map((item, i) => (
-        <span key={`${item}-${i}`} className="flex items-center">
-          <span className="whitespace-nowrap px-8 font-display text-2xl font-semibold tracking-tight text-muted transition-colors duration-300 hover:text-paper md:text-4xl">
+export default function Marquee({ items, className = "" }: MarqueeProps) {
+  return (
+    <div className={`w-full px-5 ${className}`}>
+      <div className="mx-auto grid max-w-5xl grid-cols-2 border-l border-paper/10 sm:grid-cols-3 lg:grid-cols-5">
+        {items.map((item) => (
+          <span key={item} className="flex min-w-0 items-center justify-center border-b border-r border-t border-paper/10 px-2 py-4 font-display text-sm font-semibold tracking-tight text-muted transition-colors hover:text-paper sm:px-4 sm:text-base md:py-5 md:text-lg">
             {item}
           </span>
-          <span className="text-violet">✦</span>
-        </span>
-      ))}
-    </div>
-  );
-
-  return (
-    <div className={`overflow-hidden ${className}`}>
-      <div
-        ref={trackRef}
-        className="marquee-track"
-        style={{ "--marquee-dur": `${duration}s` } as CSSProperties}
-      >
-        {row(false)}
-        {row(true)}
+        ))}
       </div>
     </div>
   );

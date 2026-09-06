@@ -7,33 +7,44 @@ import TextReveal from "../components/ui/TextReveal";
 /* ---------- stylized dark map ---------- */
 
 function DarkMap() {
+  const locations = [
+    { x: 70, y: 130, label: "SAN FRANCISCO", sub: "HQ · 37.77°N 122.41°W" },
+    { x: 215, y: 75, label: "BERLIN", sub: "EMEA · 52.52°N 13.40°E" },
+    { x: 330, y: 105, label: "TOKYO", sub: "APAC · 35.67°N 139.65°E" },
+  ];
+
   return (
-    <svg viewBox="0 0 400 220" className="w-full rounded-xl border border-paper/10">
-      <defs>
-        <pattern id="mapgrid" width="20" height="20" patternUnits="userSpaceOnUse">
-          <path d="M20 0H0v20" fill="none" stroke="rgba(244,244,245,0.06)" strokeWidth="1" />
-        </pattern>
-      </defs>
-      <rect width="400" height="220" fill="#0b0b0c" />
-      <rect width="400" height="220" fill="url(#mapgrid)" />
+    <div className="space-y-6">
+      <svg viewBox="0 0 400 220" className="w-full rounded-xl border border-paper/10">
+        <defs>
+          <pattern id="mapgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M20 0H0v20" fill="none" stroke="rgba(244,244,245,0.06)" strokeWidth="1" />
+          </pattern>
+        </defs>
+        <rect width="400" height="220" fill="#0b0b0c" />
+        <rect width="400" height="220" fill="url(#mapgrid)" />
 
-      <path d="M70 130 Q140 40 215 75" fill="none" stroke="rgba(139,92,246,0.4)" className="dash-line" />
-      <path d="M215 75 Q280 60 330 105" fill="none" stroke="rgba(139,92,246,0.4)" className="dash-line" />
+        <path d="M70 130 Q140 40 215 75" fill="none" stroke="rgba(139,92,246,0.4)" className="dash-line" />
+        <path d="M215 75 Q280 60 330 105" fill="none" stroke="rgba(139,92,246,0.4)" className="dash-line" />
 
-      {[
-        { x: 70, y: 130, label: "SAN FRANCISCO — HQ" },
-        { x: 215, y: 75, label: "BERLIN — EMEA" },
-        { x: 330, y: 105, label: "TOKYO — APAC" },
-      ].map((p) => (
-        <g key={p.label}>
-          <circle cx={p.x} cy={p.y} r="9" fill="none" stroke="rgba(6,182,212,0.5)" className="pulse-dot" />
-          <circle cx={p.x} cy={p.y} r="3" fill="#06B6D4" />
-          <text x={p.x + 12} y={p.y + 3} fontSize="7.5" fill="#52525B" fontFamily="JetBrains Mono, monospace">
-            {p.label}
-          </text>
-        </g>
-      ))}
-    </svg>
+        {locations.map((p) => (
+          <g key={p.label}>
+            <circle cx={p.x} cy={p.y} r="9" fill="none" stroke="rgba(6,182,212,0.5)" className="pulse-dot" />
+            <circle cx={p.x} cy={p.y} r="3" fill="#06B6D4" />
+          </g>
+        ))}
+      </svg>
+      
+      {/* Responsive HTML labels instead of tiny, unreadable SVG text on mobile */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-[11px] leading-relaxed tracking-[0.12em] text-faint">
+        {locations.map((p) => (
+          <div key={p.label} className="flex flex-col gap-0.5">
+            <span className="text-paper font-semibold tracking-[0.15em]">{p.label}</span>
+            <span>{p.sub}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -53,15 +64,16 @@ function Field({ label, value, onChange, error, textarea, type = "text", optiona
   const [focused, setFocused] = useState(false);
   const active = focused || value.length > 0;
 
+  // text-base (16px) is strictly required to prevent iOS Safari from auto-zooming on focus
   const shared =
-    "w-full border-b border-paper/15 bg-transparent pb-3 pt-4 text-base text-paper focus:outline-none";
+    "w-full border-b border-paper/15 bg-transparent pb-3 pt-5 text-base text-paper focus:outline-none";
 
   return (
     <div>
       <div className="relative">
         <label
           className={`pointer-events-none absolute left-0 font-mono tracking-[0.2em] transition-all duration-300 ${
-            active ? "-top-2 text-[10px] text-violet" : "top-4 text-sm text-faint"
+            active ? "-top-0.5 text-[10px] text-violet" : "top-5 text-sm text-faint"
           }`}
         >
           {label}
@@ -142,17 +154,17 @@ export default function Contact() {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (!reduced) {
         confetti({
-          particleCount: 130,
+          particleCount: 100,
           spread: 80,
-          origin: { x: 0.75, y: 0.5 },
+          origin: { x: 0.5, y: 0.6 }, // Centered so it doesn't shoot off mobile screens
           colors: ["#8B5CF6", "#06B6D4", "#F4F4F5"],
         });
         window.setTimeout(
           () =>
             confetti({
-              particleCount: 70,
+              particleCount: 60,
               spread: 100,
-              origin: { x: 0.3, y: 0.6 },
+              origin: { x: 0.5, y: 0.6 },
               colors: ["#8B5CF6", "#06B6D4", "#F4F4F5"],
             }),
           220
@@ -163,11 +175,13 @@ export default function Contact() {
 
   return (
     <div className="overflow-x-clip">
-      <section className="mx-auto grid max-w-[1400px] gap-16 px-5 pb-28 pt-32 md:px-8 md:pt-40 lg:grid-cols-2 lg:gap-24">
+      {/* Reduced vertical padding on mobile so the form isn't pushed too far down */}
+      <section className="mx-auto grid max-w-[1400px] gap-12 sm:gap-16 px-5 pb-20 pt-24 sm:pb-28 sm:pt-32 md:px-8 md:pt-40 lg:grid-cols-2 lg:gap-24">
         {/* left — info */}
         <div>
           <p className="font-mono text-[11px] tracking-[0.25em] text-violet">05 — CONTACT</p>
-          <h1 className="mt-6 font-display font-bold leading-[0.95] tracking-tight text-[clamp(2.6rem,7vw,5.5rem)]">
+          {/* Adjusted clamp so text doesn't get too small on 375px screens */}
+          <h1 className="mt-6 font-display font-bold leading-[0.95] tracking-tight text-[clamp(2.25rem,9vw,5.5rem)]">
             <TextReveal text="LET'S BUILD" className="block" />
             <TextReveal text="SOMETHING" delay={0.12} className="block text-outline" />
             <TextReveal text="UNREASONABLE." delay={0.24} className="block gradient-text" />
@@ -179,7 +193,7 @@ export default function Contact() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.6 }}
             data-cursor="write"
-            className="group mt-10 inline-block font-mono text-sm tracking-[0.12em] text-muted transition-colors hover:text-violet md:text-base"
+            className="group mt-8 inline-block font-mono text-sm tracking-[0.12em] text-muted transition-colors hover:text-violet sm:text-base break-all sm:break-normal"
           >
             HELLO@NEXUS.DEV
             <span className="block h-px w-full origin-left scale-x-0 bg-violet transition-transform duration-500 group-hover:scale-x-100" />
@@ -201,26 +215,16 @@ export default function Contact() {
             className="mt-12"
           >
             <DarkMap />
-            <div className="mt-4 grid grid-cols-3 gap-3 font-mono text-[10px] leading-relaxed tracking-[0.12em] text-faint">
-              <span>
-                37.7749° N<br />122.4194° W
-              </span>
-              <span>
-                52.5200° N<br />13.4050° E
-              </span>
-              <span>
-                35.6762° N<br />139.6503° E
-              </span>
-            </div>
           </motion.div>
         </div>
 
         {/* right — form */}
+        {/* Reduced padding on mobile (p-6) to give inputs more horizontal room */}
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.7, ease: "easeOut" }}
-          className="self-start rounded-xl border border-paper/10 bg-[#0b0b0c] p-8 md:p-12"
+          className="self-start rounded-xl border border-paper/10 bg-[#0b0b0c] p-6 sm:p-8 md:p-12"
         >
           <AnimatePresence mode="wait">
             {status === "sent" ? (
@@ -234,7 +238,7 @@ export default function Contact() {
                 <span className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan/50 bg-cyan/10">
                   <Check size={26} className="text-cyan" strokeWidth={2.4} />
                 </span>
-                <h2 className="mt-8 font-display text-4xl font-bold tracking-tight md:text-5xl">
+                <h2 className="mt-8 font-display text-3xl sm:text-4xl font-bold tracking-tight md:text-5xl">
                   <TextReveal text="MESSAGE" className="block" />
                   <TextReveal text="RECEIVED." delay={0.1} className="block text-cyan" />
                 </h2>
@@ -258,7 +262,7 @@ export default function Contact() {
                 transition={{ duration: 0.3 }}
                 onSubmit={onSubmit}
                 noValidate
-                className="space-y-9"
+                className="space-y-8 sm:space-y-9"
               >
                 <p className="font-mono text-[11px] tracking-[0.25em] text-faint">
                   TELL US WHAT YOU'RE BUILDING

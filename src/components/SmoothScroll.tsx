@@ -1,5 +1,5 @@
 import Lenis from "lenis";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 
@@ -9,13 +9,49 @@ declare global {
   }
 }
 
+function scrollToTop() {
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  window.__lenis?.scrollTo(0, { immediate: true, force: true });
+}
+
 /**
  * Wraps the app in Lenis for buttery inertial scrolling.
  * Skipped entirely for prefers-reduced-motion users, and jumps to top on route change.
  */
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   const reduced = useReducedMotion();
-  const { pathname } = useLocation();
+  const { pathname, search, hash, key } = useLocation();
+
+  useEffect(() => {
+    const previousRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+    return () => {
+      window.history.scrollRestoration = previousRestoration;
+    };
+  }, []);
+
+  useEffect(() => {
+    const resetSameRouteLink = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+
+      const link = (event.target as HTMLElement).closest<HTMLAnchorElement>("a[href]");
+      if (!link || link.target === "_blank") return;
+
+      const linkUrl = new URL(link.href, window.location.href);
+      if (linkUrl.origin !== window.location.origin || linkUrl.hash.startsWith("#http")) return;
+
+      const linkPath = linkUrl.hash.startsWith("#/")
+        ? linkUrl.hash.slice(1).split(/[?#]/)[0] || "/"
+        : linkUrl.pathname;
+
+      if (linkPath === pathname) scrollToTop();
+    };
+
+    document.addEventListener("click", resetSameRouteLink, true);
+    return () => document.removeEventListener("click", resetSameRouteLink, true);
+  }, [pathname]);
 
   useEffect(() => {
     if (reduced) return;
@@ -27,10 +63,9 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     };
   }, [reduced]);
 
-  useEffect(() => {
-    if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
-    else window.scrollTo(0, 0);
-  }, [pathname]);
+  useLayoutEffect(() => {
+    scrollToTop();
+  }, [pathname, search, hash, key]);
 
   return <>{children}</>;
 }

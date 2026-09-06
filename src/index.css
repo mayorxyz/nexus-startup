@@ -180,10 +180,11 @@ html.lenis body {
   will-change: transform;
 }
 .marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee-x calc(var(--marquee-dur, 30s) / var(--speed, 1)) linear infinite;
-  will-change: transform;
+  animation: none !important;
+}
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 .dash-line {
   stroke-dasharray: 6 6;

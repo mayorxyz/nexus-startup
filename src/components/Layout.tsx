@@ -11,6 +11,13 @@ const LINKS = [
   { to: "/pricing", label: "PRICING" },
 ];
 
+// --- ✏️ EDIT YOUR SOCIAL LINKS HERE ---
+const SOCIALS = [
+  { label: "X / TWITTER", href: "https://x.com/mayor_1_7" },
+  { label: "GITHUB", href: "https://github.com/mayorxyz" },
+  { label: "LINKEDIN", href: "" },
+];
+
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -36,13 +43,14 @@ function Nav() {
     };
   }, [open]);
 
+  // Fallback to close menu if route changes from somewhere else
   useEffect(() => setOpen(false), [pathname]);
 
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-[70] transition-all duration-500 ${
-          scrolled ? "border-b border-paper/10 bg-obsidian/85 backdrop-blur-xl" : "bg-transparent"
+        className={`fixed inset-x-0 top-0 z-[70] transition-all duration-500 pt-[env(safe-area-inset-top)] ${
+          scrolled ? "border-b border-paper/10 bg-obsidian/90 backdrop-blur-xl" : "bg-transparent"
         }`}
       >
         <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-5 py-5 md:px-8">
@@ -111,13 +119,17 @@ function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
+            onClick={() => setOpen(false)} // ← Tapping the dark background closes the menu
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
             exit={{ clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[72] flex flex-col justify-between bg-obsidian/95 px-6 pb-10 pt-28 backdrop-blur-2xl lg:hidden"
+            className="fixed inset-0 z-[72] flex flex-col min-h-full bg-obsidian/95 px-6 backdrop-blur-2xl lg:hidden overflow-y-auto overscroll-none
+                       pt-[max(7rem,env(safe-area-inset-top))] 
+                       pb-[max(2.5rem,env(safe-area-inset-bottom))]"
           >
             <motion.nav
+              onClick={(e) => e.stopPropagation()} // ← Prevents the background click from firing when tapping links
               initial="hidden"
               animate="show"
               variants={{ show: { transition: { staggerChildren: 0.07, delayChildren: 0.15 } } }}
@@ -133,6 +145,7 @@ function Nav() {
                 >
                   <Link
                     to={l.to}
+                    onClick={() => setOpen(false)} // ← Forces menu to close even if clicking the current page
                     className="flex items-baseline gap-4 font-display text-4xl font-bold tracking-tight text-paper transition-colors hover:text-violet sm:text-5xl"
                   >
                     <span className="font-mono text-xs text-faint">0{i + 1}</span>
@@ -141,7 +154,7 @@ function Nav() {
                 </motion.div>
               ))}
             </motion.nav>
-            <div className="font-mono text-xs tracking-[0.2em] text-faint">
+            <div className="mt-auto pt-10 font-mono text-xs tracking-[0.2em] text-faint">
               HELLO@NEXUS.DEV — SF · TYO · BER
             </div>
           </motion.div>
@@ -153,7 +166,7 @@ function Nav() {
 
 function Footer() {
   return (
-    <footer className="relative border-t border-paper/10 px-5 pb-8 pt-16 md:px-8">
+    <footer className="relative border-t border-paper/10 px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-16 md:px-8">
       <div className="mx-auto max-w-[1400px]">
         <Link
           to="/"
@@ -181,16 +194,20 @@ function Footer() {
           <div>
             <h3 className="font-mono text-[11px] tracking-[0.25em] text-faint">CONNECT</h3>
             <ul className="mt-4 space-y-2.5 text-sm">
-              {["X / TWITTER", "GITHUB", "LINKEDIN"].map((s) => (
-                <li key={s}>
-                  <a
-                    href={`https://${s.split(" ")[0].toLowerCase()}.com/nexus`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-muted transition-colors hover:text-cyan"
-                  >
-                    {s} ↗
-                  </a>
+              {SOCIALS.map((s) => (
+                <li key={s.label}>
+                  {s.href ? (
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-muted transition-colors hover:text-cyan"
+                    >
+                      {s.label} ↗
+                    </a>
+                  ) : (
+                    <span className="text-muted">{s.label}</span>
+                  )}
                 </li>
               ))}
             </ul>
